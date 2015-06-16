@@ -17,8 +17,12 @@ convertToSmartObject = (root) ->
     convertToSmartObject(layerSet) if layerSet.visible
 
 main = ->
-  copiedDoc = app.activeDocument.duplicate(activeDocument.name[..-5] + '.converted.psd')
+  docName = activeDocument.name[..-5] + '.converted.psd'
+  docName = docName.replace(/original.converted.psd/g, "psd")
+  docPath = app.activeDocument.path
+  copiedDoc = app.activeDocument.duplicate(docName)
   convertToSmartObject(copiedDoc)
+  copiedDoc.saveAs(File(docPath + '/' + docName))
 
 if setup()
   main()

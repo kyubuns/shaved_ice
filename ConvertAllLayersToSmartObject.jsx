@@ -37,9 +37,13 @@
   };
 
   main = function() {
-    var copiedDoc;
-    copiedDoc = app.activeDocument.duplicate(activeDocument.name.slice(0, -4) + '.converted.psd');
-    return convertToSmartObject(copiedDoc);
+    var copiedDoc, docName, docPath;
+    docName = activeDocument.name.slice(0, -4) + '.converted.psd';
+    docName = docName.replace(/original.converted.psd/g, "psd");
+    docPath = app.activeDocument.path;
+    copiedDoc = app.activeDocument.duplicate(docName);
+    convertToSmartObject(copiedDoc);
+    return copiedDoc.saveAs(File(docPath + '/' + docName));
   };
 
   if (setup()) {
