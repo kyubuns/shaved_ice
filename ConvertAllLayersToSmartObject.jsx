@@ -16,7 +16,7 @@
     ref = root.artLayers;
     for (i = 0, len = ref.length; i < len; i++) {
       layer = ref[i];
-      if (layer.kind === LayerKind.TEXT) {
+      if (layer.kind === LayerKind.TEXT || !layer.visible) {
         continue;
       }
       layer.allLocked = false;
@@ -27,7 +27,11 @@
     results = [];
     for (j = 0, len1 = ref1.length; j < len1; j++) {
       layerSet = ref1[j];
-      results.push(convertToSmartObject(layerSet));
+      if (layerSet.visible) {
+        results.push(convertToSmartObject(layerSet));
+      } else {
+        results.push(void 0);
+      }
     }
     return results;
   };

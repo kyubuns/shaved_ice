@@ -9,12 +9,12 @@ setup = ->
 
 convertToSmartObject = (root) ->
   for layer in root.artLayers
-    continue if layer.kind == LayerKind.TEXT
+    continue if layer.kind == LayerKind.TEXT || !layer.visible
     layer.allLocked = false
     app.activeDocument.activeLayer = layer
     executeAction(app.stringIDToTypeID('newPlacedLayer'), new ActionDescriptor(), DialogModes.NO)
   for layerSet in root.layerSets
-    convertToSmartObject(layerSet)
+    convertToSmartObject(layerSet) if layerSet.visible
 
 main = ->
   copiedDoc = app.activeDocument.duplicate(activeDocument.name[..-5] + '.converted.psd')
