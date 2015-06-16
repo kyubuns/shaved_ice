@@ -19,6 +19,7 @@
       if (layer.kind === LayerKind.TEXT) {
         continue;
       }
+      layer.allLocked = false;
       app.activeDocument.activeLayer = layer;
       executeAction(app.stringIDToTypeID('newPlacedLayer'), new ActionDescriptor(), DialogModes.NO);
     }

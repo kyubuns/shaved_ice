@@ -10,6 +10,7 @@ setup = ->
 convertToSmartObject = (root) ->
   for layer in root.artLayers
     continue if layer.kind == LayerKind.TEXT
+    layer.allLocked = false
     app.activeDocument.activeLayer = layer
     executeAction(app.stringIDToTypeID('newPlacedLayer'), new ActionDescriptor(), DialogModes.NO)
   for layerSet in root.layerSets
