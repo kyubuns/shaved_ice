@@ -7,21 +7,27 @@ setup = ->
 
   return true
 
-convertToSmartObject = (root) ->
+rasterize = (root) ->
   for layer in root.artLayers
     continue if layer.kind == LayerKind.TEXT || !layer.visible
     layer.allLocked = false
     app.activeDocument.activeLayer = layer
     executeAction(app.stringIDToTypeID('newPlacedLayer'), new ActionDescriptor(), DialogModes.NO)
+
+  for layer in root.artLayers
+    continue if layer.kind == LayerKind.TEXT || !layer.visible
+    layer.rasterize(RasterizeType.ENTIRELAYER)
+
   for layerSet in root.layerSets
-    convertToSmartObject(layerSet) if layerSet.visible
+    rasterize(layerSet) if layerSet.visible
+
 
 main = ->
   docName = activeDocument.name[..-5] + '.converted.psd'
   docName = docName.replace(/original.converted.psd/g, "psd")
   docPath = app.activeDocument.path
   copiedDoc = app.activeDocument.duplicate(docName)
-  convertToSmartObject(copiedDoc)
+  rasterize(copiedDoc)
   copiedDoc.saveAs(File(docPath + '/' + docName))
 
 if setup()

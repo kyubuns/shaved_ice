@@ -3,7 +3,7 @@
 ## 準備
 
 * ConvertAllLayersToSmartObject.jsxをダウンロード
-* ダウンロードしたファイルを'/Applications/Adobe Photoshop CC 2014/Presets/Scripts/'以下にいれる
+* ダウンロードしたファイルを'/Applications/Adobe Photoshop CC 2015/Presets/Scripts/'以下にいれる
  * (Windowsは、C:\Program Files\Adobe\Adobe Photoshop CC (64 Bit)\Presets\Scripts\)
 
 ## 使い方
