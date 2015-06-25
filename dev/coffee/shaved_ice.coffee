@@ -1,3 +1,6 @@
+String::startsWith ?= (s) -> @[...s.length] is s
+String::endsWith   ?= (s) -> s is '' or @[-s.length..] is s
+
 setup = ->
   preferences.rulerUnits = Units.PIXELS
 
@@ -8,18 +11,35 @@ setup = ->
   return true
 
 rasterize = (root) ->
+  # delete layers
+  deleteLayers = []
   for layer in root.artLayers
-    continue if layer.kind == LayerKind.TEXT || !layer.visible
+    if !layer.visible || layer.name.startsWith('#')
+      deleteLayers.push layer
+
+  for layer in deleteLayers
+    layer.remove()
+
+  deleteLayerSets = []
+  for layerSet in root.layerSets
+    if !layerSet.visible || layerSet.name.startsWith('#')
+      deleteLayerSets.push layerSet
+
+  for layer in deleteLayerSets
+    layer.remove()
+
+  for layer in root.artLayers
+    continue if layer.kind == LayerKind.TEXT
     layer.allLocked = false
     app.activeDocument.activeLayer = layer
     executeAction(app.stringIDToTypeID('newPlacedLayer'), new ActionDescriptor(), DialogModes.NO)
 
   for layer in root.artLayers
-    continue if layer.kind == LayerKind.TEXT || !layer.visible
+    continue if layer.kind == LayerKind.TEXT
     layer.rasterize(RasterizeType.ENTIRELAYER)
 
   for layerSet in root.layerSets
-    rasterize(layerSet) if layerSet.visible
+    rasterize(layerSet)
 
 
 main = ->
