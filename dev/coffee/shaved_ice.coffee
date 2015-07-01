@@ -42,6 +42,22 @@ rasterize = (root) ->
   deleteEmptyLayerSets(root)
 
   for layer in root.artLayers
+    continue if layer.kind != LayerKind.TEXT
+    text = layer.textItem
+    fontSize = text.size
+    before_bounds = layer.bounds
+    text.verticalScale = 100.0
+    text.horizontalScale = 100.0
+    text.size = fontSize
+    after_bounds = layer.bounds
+    w_scale = (before_bounds[2] - before_bounds[0]) / (after_bounds[2] - after_bounds[0])
+    h_scale = (before_bounds[3] - before_bounds[1]) / (after_bounds[3] - after_bounds[1])
+    layer.resize(w_scale * 100, h_scale * 100)
+
+    after_bounds = layer.bounds
+    layer.translate(before_bounds[0] - after_bounds[0], before_bounds[1] - after_bounds[1])
+
+  for layer in root.artLayers
     continue if layer.kind == LayerKind.TEXT
     convertToSmartObject(layer)
 

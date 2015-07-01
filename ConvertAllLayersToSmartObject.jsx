@@ -66,16 +66,27 @@
   };
 
   rasterize = function(root) {
-    var i, j, k, layer, layerSet, len, len1, len2, ref, ref1, ref2, results;
+    var after_bounds, before_bounds, fontSize, h_scale, i, j, k, l, layer, layerSet, len, len1, len2, len3, ref, ref1, ref2, ref3, results, text, w_scale;
     deleteEmptyLayers(root);
     deleteEmptyLayerSets(root);
     ref = root.artLayers;
     for (i = 0, len = ref.length; i < len; i++) {
       layer = ref[i];
-      if (layer.kind === LayerKind.TEXT) {
+      if (layer.kind !== LayerKind.TEXT) {
         continue;
       }
-      convertToSmartObject(layer);
+      text = layer.textItem;
+      fontSize = text.size;
+      before_bounds = layer.bounds;
+      text.verticalScale = 100.0;
+      text.horizontalScale = 100.0;
+      text.size = fontSize;
+      after_bounds = layer.bounds;
+      w_scale = (before_bounds[2] - before_bounds[0]) / (after_bounds[2] - after_bounds[0]);
+      h_scale = (before_bounds[3] - before_bounds[1]) / (after_bounds[3] - after_bounds[1]);
+      layer.resize(w_scale * 100, h_scale * 100);
+      after_bounds = layer.bounds;
+      layer.translate(before_bounds[0] - after_bounds[0], before_bounds[1] - after_bounds[1]);
     }
     ref1 = root.artLayers;
     for (j = 0, len1 = ref1.length; j < len1; j++) {
@@ -83,12 +94,20 @@
       if (layer.kind === LayerKind.TEXT) {
         continue;
       }
+      convertToSmartObject(layer);
+    }
+    ref2 = root.artLayers;
+    for (k = 0, len2 = ref2.length; k < len2; k++) {
+      layer = ref2[k];
+      if (layer.kind === LayerKind.TEXT) {
+        continue;
+      }
       layer.rasterize(RasterizeType.ENTIRELAYER);
     }
-    ref2 = root.layerSets;
+    ref3 = root.layerSets;
     results = [];
-    for (k = 0, len2 = ref2.length; k < len2; k++) {
-      layerSet = ref2[k];
+    for (l = 0, len3 = ref3.length; l < len3; l++) {
+      layerSet = ref3[l];
       results.push(rasterize(layerSet));
     }
     return results;
