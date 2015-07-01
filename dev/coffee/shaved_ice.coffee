@@ -10,8 +10,8 @@ setup = ->
 
   return true
 
-rasterize = (root) ->
-  # delete layers
+
+deleteEmptyLayers = (root) ->
   deleteLayers = []
   for layer in root.artLayers
     if !layer.visible || layer.name.startsWith('#')
@@ -20,6 +20,8 @@ rasterize = (root) ->
   for layer in deleteLayers
     layer.remove()
 
+
+deleteEmptyLayerSets = (root) ->
   deleteLayerSets = []
   for layerSet in root.layerSets
     if !layerSet.visible || layerSet.name.startsWith('#')
@@ -28,11 +30,20 @@ rasterize = (root) ->
   for layer in deleteLayerSets
     layer.remove()
 
+
+convertToSmartObject = (layer) ->
+  layer.allLocked = false
+  app.activeDocument.activeLayer = layer
+  executeAction(app.stringIDToTypeID('newPlacedLayer'), new ActionDescriptor(), DialogModes.NO)
+
+
+rasterize = (root) ->
+  deleteEmptyLayers(root)
+  deleteEmptyLayerSets(root)
+
   for layer in root.artLayers
     continue if layer.kind == LayerKind.TEXT
-    layer.allLocked = false
-    app.activeDocument.activeLayer = layer
-    executeAction(app.stringIDToTypeID('newPlacedLayer'), new ActionDescriptor(), DialogModes.NO)
+    convertToSmartObject(layer)
 
   for layer in root.artLayers
     continue if layer.kind == LayerKind.TEXT
